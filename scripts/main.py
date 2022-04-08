@@ -35,6 +35,7 @@ while True:
     _, image = cap.read()
 
     image_out = segmentator.removeBG(image, background_images_list[background_index],threshold=threshold)
+    webcam_out = image_out.copy()
 
     
     imageStacked = cvzone.stackImages([image, image_out], 2 ,1)
@@ -46,7 +47,17 @@ while True:
 
     cv2.putText(img=imageStacked, text=confidence_text, org=org_confidence_text, fontFace=cv2.FONT_HERSHEY_DUPLEX, fontScale=1.5, color=(0, 0, 255),thickness=2)
 
-    cv2.imshow("Image", imageStacked)
+    scale_percent = 60 # percent of original size
+    width = int(imageStacked.shape[1] * scale_percent / 100)
+    height = int(imageStacked.shape[0] * scale_percent / 100)
+    dim = (width, height)
+    
+    # resize image
+    resized = cv2.resize(imageStacked, dim, interpolation = cv2.INTER_AREA)
+
+
+    cv2.imshow("Comparison window", resized)
+    cv2.imshow("Webcam Output", webcam_out)
 
     k = cv2.waitKey(1)
 
